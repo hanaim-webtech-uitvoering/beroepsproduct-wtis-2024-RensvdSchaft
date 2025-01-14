@@ -87,6 +87,7 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
     </form>
 
     <p>Al een account? <a href="index.php">Log hier in</a></p>
+    <a href="privacy.php">Privacyverklaring</a>
 </body>
 
 </html>

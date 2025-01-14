@@ -71,6 +71,7 @@ $orders = getUserOrders($clientUsername);
 
     <a href="dashboard.php">Terug naar Dashboard</a>
     <a href="logout.php">Uitloggen</a>
+    <a href="privacy.php">Privacyverklaring</a>
 </body>
 
 </html>

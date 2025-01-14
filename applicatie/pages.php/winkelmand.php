@@ -70,6 +70,7 @@ if ($_SERVER["REQUEST_METHOD"] == "POST" && isset($_POST['confirm_order'])) {
 
     <a href="dashboard.php">Terug naar Dashboard</a>
     <a href="logout.php">Uitloggen</a>
+    <a href="privacy.php">Privacyverklaring</a>
 </body>
 
 </html>

@@ -83,6 +83,7 @@ $orderItems = getOrderItems($orderId);
 
     <a href="bestellingsoverzicht.php">Terug naar Bestellingsoverzicht</a>
     <a href="logout.php">Uitloggen</a>
+    <a href="privacy.php">Privacyverklaring</a>
 </body>
 
 </html>

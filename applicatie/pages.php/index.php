@@ -44,6 +44,7 @@ if ($role === 'Personnel') {
   </form>
 
   <p>Nog geen account? <a href="register.php">Maak hier een account aan</a></p>
+  <a href="privacy.php">Privacyverklaring</a>
 </body>
 
 </html>

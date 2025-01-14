@@ -41,6 +41,7 @@ $items = getProducts();
     <a href="winkelmand.php">Bekijk winkelmand</a>
     <a href="profiel.php">Bekijk uw bestellingen</a>
     <a href="logout.php">Uitloggen</a>
+    <a href="privacy.php">Privacyverklaring</a>
 </body>
 
 </html>
