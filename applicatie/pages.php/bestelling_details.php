@@ -1,7 +1,6 @@
 <?php
 session_start();
 
-
 if (!isset($_SESSION['username']) || $_SESSION['role'] !== 'Personnel') {
     header("Location: index.php");
     exit();
@@ -10,18 +9,26 @@ if (!isset($_SESSION['username']) || $_SESSION['role'] !== 'Personnel') {
 require_once('../db_connectie.php');
 require_once('functions.php');
 
-
 if (!isset($_GET['order_id']) || empty($_GET['order_id'])) {
     echo "Fout: Geen order ID opgegeven.";
     exit();
 }
 
 $orderId = $_GET['order_id'];
+$orderDetails = getOrderDetailsAndItems($orderId);
 
-
-$orderDetails = getOrderDetails($orderId);
-$orderItems = getOrderItems($orderId);
-
+$orderId = htmlspecialchars($orderDetails['order_id']);
+$firstName = htmlspecialchars($orderDetails['first_name']);
+$clientUsername = htmlspecialchars($orderDetails['client_username']);
+$datetime = htmlspecialchars($orderDetails['datetime']);
+$address = is_null($orderDetails['address']) || empty($orderDetails['address']) ?
+    "Niet opgegeven bij deze order, bel de klant!" :
+    nl2br(htmlspecialchars($orderDetails['address']));
+$statusText = ($orderDetails['status'] == 1) ? 'Besteld' :
+    (($orderDetails['status'] == 2) ? 'In Behandeling' :
+        (($orderDetails['status'] == 3) ? 'Afgeleverd' : 'Geannuleerd'));
+$totalAmount = number_format($orderDetails['total_amount'], 2);
+$orderItems = $orderDetails['items'];
 ?>
 
 <!DOCTYPE html>
@@ -34,28 +41,17 @@ $orderItems = getOrderItems($orderId);
 </head>
 
 <body>
-    <h1>Details van Bestelling ID: <?php echo htmlspecialchars($orderDetails['order_id']); ?></h1>
+    <h1>Details van Bestelling ID: <?php echo $orderId; ?></h1>
 
     <h2>Klantinformatie</h2>
-    <p><strong>Klant:</strong> <?php echo htmlspecialchars($orderDetails['first_name']); ?>
-        (<?php echo htmlspecialchars($orderDetails['client_username']); ?>)</p>
-    <p><strong>Datum en Tijd:</strong> <?php echo htmlspecialchars($orderDetails['datetime']); ?></p>
+    <p><strong>Klant:</strong> <?php echo $firstName; ?> (<?php echo $clientUsername; ?>)</p>
+    <p><strong>Datum en Tijd:</strong> <?php echo $datetime; ?></p>
 
-    <p><strong>Adres:</strong>
-        <?php
-        if (is_null($orderDetails['address']) || empty($orderDetails['address'])) {
-            echo "Niet opgegeven bij deze order, bel de klant!";
-        } else {
-            echo nl2br(htmlspecialchars($orderDetails['address']));
-        }
-        ?>
-    </p>
+    <p><strong>Adres:</strong> <?php echo $address; ?></p>
 
-    <p><strong>Status:</strong>
-        <?php echo htmlspecialchars($orderDetails['status'] == 1 ? 'Besteld' : ($orderDetails['status'] == 2 ? 'In Behandeling' : ($orderDetails['status'] == 3 ? 'Afgeleverd' : 'Geannuleerd'))); ?>
-    </p>
+    <p><strong>Status:</strong> <?php echo $statusText; ?></p>
 
-    <p><strong>Totaalbedrag:</strong> €<?php echo number_format($orderDetails['total_amount'], 2); ?></p>
+    <p><strong>Totaalbedrag:</strong> €<?php echo $totalAmount; ?></p>
 
     <h2>Bestelde Producten</h2>
     <table border="1">

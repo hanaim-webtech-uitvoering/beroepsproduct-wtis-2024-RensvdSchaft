@@ -49,9 +49,10 @@ function registerUser($hashed_password, $username, $first_name, $last_name, $rol
     return $stmt->execute([$username, $first_name, $last_name, $role, $address, $hashed_password]);
 }
 
-function getOrderDetails($orderId)
+function getOrderDetailsAndItems($orderId)
 {
     $conn = maakVerbinding();
+
     $stmt = $conn->prepare("
         SELECT o.order_id, o.datetime, o.status, o.client_username, u.first_name, o.address, SUM(op.quantity * pr.price) AS total_amount
         FROM Pizza_Order o 
@@ -62,18 +63,17 @@ function getOrderDetails($orderId)
         GROUP BY o.order_id, o.datetime, o.status, u.first_name, o.client_username, o.address
     ");
     $stmt->execute([$orderId]);
-    return $stmt->fetch(PDO::FETCH_ASSOC);
-}
+    $orderDetails = $stmt->fetch(PDO::FETCH_ASSOC);
 
-function getOrderItems($orderId)
-{
-    $conn = maakVerbinding();
-    $stmt = $conn->prepare("
+
+    $itemStmt = $conn->prepare("
         SELECT product_name, quantity 
         FROM Pizza_Order_Product 
         WHERE order_id = ?");
-    $stmt->execute([$orderId]);
-    return $stmt->fetchAll(PDO::FETCH_ASSOC);
+    $itemStmt->execute([$orderId]);
+    $orderDetails['items'] = $itemStmt->fetchAll(PDO::FETCH_ASSOC);
+
+    return $orderDetails;
 }
 
 function getOrders()
