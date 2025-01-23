@@ -96,9 +96,10 @@ if ($_SERVER["REQUEST_METHOD"] == "POST" && isset($_POST['update_status'])) {
         </tbody>
     </table>
 
-    <a href="dashboard.php">Terug naar Dashboard</a>
-    <a href="logout.php">Uitloggen</a>
-    <a href="privacy.php">Privacyverklaring</a>
+    <?php
+    include 'navigation.php';
+    renderNavigation();
+    ?>
 </body>
 
 </html>

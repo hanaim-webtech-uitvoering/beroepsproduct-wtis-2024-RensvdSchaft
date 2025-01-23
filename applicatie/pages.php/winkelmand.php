@@ -68,9 +68,10 @@ if ($_SERVER["REQUEST_METHOD"] == "POST" && isset($_POST['confirm_order'])) {
         <button type="submit" name="confirm_order">Bevestig Bestelling</button>
     </form>
 
-    <a href="dashboard.php">Terug naar Dashboard</a>
-    <a href="logout.php">Uitloggen</a>
-    <a href="privacy.php">Privacyverklaring</a>
+    <?php
+    include 'navigation.php';
+    renderNavigation();
+    ?>
 </body>
 
 </html>

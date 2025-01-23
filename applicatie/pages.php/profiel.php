@@ -69,9 +69,10 @@ $orderDetails = getOrderDetails($orderId);
         </tbody>
     </table>
 
-    <a href="dashboard.php">Terug naar Dashboard</a>
-    <a href="logout.php">Uitloggen</a>
-    <a href="privacy.php">Privacyverklaring</a>
+    <?php
+    include 'navigation.php';
+    renderNavigation();
+    ?>
 </body>
 
 </html>

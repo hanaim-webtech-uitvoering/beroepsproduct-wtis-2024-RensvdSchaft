@@ -77,9 +77,10 @@ $orderItems = $orderDetails['items'];
         </tbody>
     </table>
 
-    <a href="bestellingsoverzicht.php">Terug naar Bestellingsoverzicht</a>
-    <a href="logout.php">Uitloggen</a>
-    <a href="privacy.php">Privacyverklaring</a>
+    <?php
+    include 'navigation.php';
+    renderNavigation();
+    ?>
 </body>
 
 </html>
