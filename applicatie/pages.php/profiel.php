@@ -10,7 +10,7 @@ require_once('../db_connectie.php');
 require_once('functions.php');
 
 $clientUsername = $_SESSION['username'];
-$orders = getUserOrders($clientUsername);
+$orderDetails = getOrderDetails($orderId);
 ?>
 
 <!DOCTYPE html>

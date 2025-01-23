@@ -49,50 +49,6 @@ function registerUser($hashed_password, $username, $first_name, $last_name, $rol
     return $stmt->execute([$username, $first_name, $last_name, $role, $address, $hashed_password]);
 }
 
-function getOrderDetailsAndItems($orderId)
-{
-    $conn = maakVerbinding();
-
-    $stmt = $conn->prepare("
-        SELECT o.order_id, o.datetime, o.status, o.client_username, u.first_name, o.address, SUM(op.quantity * pr.price) AS total_amount
-        FROM Pizza_Order o 
-        JOIN [User] u ON o.client_username = u.username 
-        LEFT JOIN Pizza_Order_Product op ON o.order_id = op.order_id
-        LEFT JOIN Product pr ON op.product_name = pr.name
-        WHERE o.order_id = ?
-        GROUP BY o.order_id, o.datetime, o.status, u.first_name, o.client_username, o.address
-    ");
-    $stmt->execute([$orderId]);
-    $orderDetails = $stmt->fetch(PDO::FETCH_ASSOC);
-
-
-    $itemStmt = $conn->prepare("
-        SELECT product_name, quantity 
-        FROM Pizza_Order_Product 
-        WHERE order_id = ?");
-    $itemStmt->execute([$orderId]);
-    $orderDetails['items'] = $itemStmt->fetchAll(PDO::FETCH_ASSOC);
-
-    return $orderDetails;
-}
-
-function getOrders()
-{
-    $conn = maakVerbinding();
-    $stmt = $conn->prepare("
-        SELECT o.order_id, o.datetime, o.status, o.client_username, u.first_name, p.username AS personnel_username, SUM(op.quantity * pr.price) AS total_amount
-        FROM Pizza_Order o 
-        JOIN [User] u ON o.client_username = u.username 
-        JOIN Pizza_Order_Product op ON o.order_id = op.order_id
-        JOIN Product pr ON op.product_name = pr.name
-        JOIN [User] p ON o.personnel_username = p.username
-        GROUP BY o.order_id, o.datetime, o.status, u.first_name, o.client_username, p.username
-        ORDER BY o.datetime DESC
-    ");
-    $stmt->execute();
-    return $stmt->fetchAll(PDO::FETCH_ASSOC);
-}
-
 function updateOrderStatus($orderId, $newStatus)
 {
     $conn = maakVerbinding();
@@ -117,47 +73,7 @@ function attemptLogin($username, $password)
     return false;
 }
 
-function getUserOrders($username)
-{
-    try {
-        $conn = maakVerbinding();
 
-        $sql = "
-            SELECT po.order_id, po.datetime, po.status, po.personnel_username
-            FROM dbo.Pizza_Order po
-            WHERE po.client_username = :username
-            ORDER BY po.datetime DESC";
-
-        $stmt = $conn->prepare($sql);
-        $stmt->execute(['username' => $username]);
-        $orders = $stmt->fetchAll(PDO::FETCH_ASSOC);
-
-        foreach ($orders as &$order) {
-            $itemSql = "
-                SELECT pop.product_name, pop.quantity, p.price
-                FROM dbo.Pizza_Order_Product pop
-                JOIN dbo.Product p ON pop.product_name = p.name
-                WHERE pop.order_id = :order_id";
-
-            $itemStmt = $conn->prepare($itemSql);
-            $itemStmt->execute(['order_id' => $order['order_id']]);
-            $items = $itemStmt->fetchAll(PDO::FETCH_ASSOC);
-
-            foreach ($items as &$item) {
-                if (!isset($item['price'])) {
-                    $item['price'] = 0.00;
-                }
-            }
-
-            $order['items'] = $items;
-        }
-
-        return $orders;
-    } catch (PDOException $e) {
-        echo "Error: " . $e->getMessage();
-        return [];
-    }
-}
 function getCartItems($cartItems)
 {
     $conn = maakVerbinding();
@@ -421,4 +337,28 @@ function renderOrderTableRows($orders)
 
     return $html;
 }
+
+
+function getOrderDetails($orderId)
+{
+    $sql = "
+        SELECT o.order_id, o.datetime, o.status, o.client_username, u.first_name, o.address, SUM(op.quantity * pr.price) AS total_amount
+        FROM Pizza_Order o 
+        JOIN [User] u ON o.client_username = u.username 
+        LEFT JOIN Pizza_Order_Product op ON o.order_id = op.order_id
+        LEFT JOIN Product pr ON op.product_name = pr.name
+        WHERE o.order_id = ?
+        GROUP BY o.order_id, o.datetime, o.status, u.first_name, o.client_username, o.address";
+
+    return executeQuery($sql, [$orderId])->fetch(PDO::FETCH_ASSOC);
+}
+
+function executeQuery($sql, $params = [])
+{
+    $conn = maakVerbinding();
+    $stmt = $conn->prepare($sql);
+    $stmt->execute($params);
+    return $stmt;
+}
+
 ?>

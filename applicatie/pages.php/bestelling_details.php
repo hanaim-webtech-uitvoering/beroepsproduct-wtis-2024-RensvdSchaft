@@ -15,7 +15,7 @@ if (!isset($_GET['order_id']) || empty($_GET['order_id'])) {
 }
 
 $orderId = $_GET['order_id'];
-$orderDetails = getOrderDetailsAndItems($orderId);
+$orderDetails = getOrderDetails($orderId);
 
 $orderId = htmlspecialchars($orderDetails['order_id']);
 $firstName = htmlspecialchars($orderDetails['first_name']);

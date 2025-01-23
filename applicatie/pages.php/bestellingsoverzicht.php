@@ -9,7 +9,9 @@ if (!isset($_SESSION['username']) || $_SESSION['role'] !== 'Personnel') {
 require_once('../db_connectie.php');
 require_once('functions.php');
 
-$orders = getOrders();
+$orderId = $_POST['order_id'];
+
+$orders = getOrderDetails($orderId);
 
 if ($_SERVER["REQUEST_METHOD"] == "POST" && isset($_POST['update_status'])) {
     $orderId = $_POST['order_id'];
