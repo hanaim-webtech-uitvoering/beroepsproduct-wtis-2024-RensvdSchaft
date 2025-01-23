@@ -338,7 +338,6 @@ function renderOrderTableRows($orders)
     return $html;
 }
 
-
 function getOrderDetails($orderId)
 {
     $sql = "
